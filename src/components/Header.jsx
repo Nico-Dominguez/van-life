@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
+import imageUrl from "/assets/avatar-icon.png";
 
 export default function Header() {
   const activeStyles = {
@@ -7,6 +8,10 @@ export default function Header() {
     textDecoration: "underline",
     color: "#161616",
   };
+
+  function fakeLogOut() {
+    localStorage.removeItem("loggedin");
+  }
 
   return (
     <header>
@@ -33,8 +38,9 @@ export default function Header() {
           Vans
         </NavLink>
         <Link to="login" className="login-link">
-          Login
+          <img src={imageUrl} className="login-icon" />
         </Link>
+        <button onClick={fakeLogOut}>X</button>
       </nav>
     </header>
   );
