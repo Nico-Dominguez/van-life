@@ -1,30 +1,39 @@
-// pages/Login.jsx
-import React, { useState, useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import AuthContext from "../context/AuthContext";
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { loginUser } from "../api";
+
+/**
+ * Challenge: read up on the useNavigate hook from the
+ * docs and implement it in the VanLife app. When the user
+ * successfully logs in, they should be redirected to the
+ * /host route.
+ */
 
 export default function Login() {
-  const [loginFormData, setLoginFormData] = useState({
-    username: "",
+  const [loginFormData, setLoginFormData] = React.useState({
+    email: "",
     password: "",
   });
-  const [error, setError] = useState(null);
+  const [status, setStatus] = React.useState("idle");
+  const [error, setError] = React.useState(null);
+
   const location = useLocation();
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
-  const from = location.state?.from || "/host";
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (
-      loginFormData.username === "user" &&
-      loginFormData.password === "password"
-    ) {
-      login();
-      navigate(from, { replace: true });
-    } else {
-      setError("Invalid credentials");
-    }
+    setStatus("submitting");
+    loginUser(loginFormData)
+      .then((data) => {
+        setError(null);
+        navigate("/host");
+      })
+      .catch((err) => {
+        setError(err);
+      })
+      .finally(() => {
+        setStatus("idle");
+      });
   }
 
   function handleChange(e) {
@@ -37,14 +46,18 @@ export default function Login() {
 
   return (
     <div className="login-container">
-      {error && <h3 className="login-error">{error}</h3>}
+      {location.state?.message && (
+        <h3 className="login-error">{location.state.message}</h3>
+      )}
+      <h1>Sign in to your account</h1>
+      {error?.message && <h3 className="login-error">{error.message}</h3>}
+
       <form onSubmit={handleSubmit} className="login-form">
         <input
-          name="username"
+          name="email"
           onChange={handleChange}
-          type="text"
-          placeholder="Username"
-          value={loginFormData.username}
+          placeholder="Email address"
+          value={loginFormData.email}
         />
         <input
           name="password"
@@ -53,7 +66,9 @@ export default function Login() {
           placeholder="Password"
           value={loginFormData.password}
         />
-        <button>Log in</button>
+        <button disabled={status === "submitting"}>
+          {status === "submitting" ? "Logging in..." : "Log in"}
+        </button>
       </form>
     </div>
   );

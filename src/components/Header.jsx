@@ -1,15 +1,12 @@
-import React, { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import AuthContext from "../context/AuthContext";
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
 
 export default function Header() {
-  const { isLoggedIn, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  function handleLogout() {
-    logout();
-    navigate("/");
-  }
+  const activeStyles = {
+    fontWeight: "bold",
+    textDecoration: "underline",
+    color: "#161616",
+  };
 
   return (
     <header>
@@ -17,18 +14,27 @@ export default function Header() {
         #VanLife
       </Link>
       <nav>
-        <Link to="/about">About</Link>
-        <Link to="/vans">Vans</Link>
-        {isLoggedIn ? (
-          <>
-            <Link to="/host">Host</Link>
-            <button onClick={handleLogout} className="logout-btn">
-              Logout
-            </button>
-          </>
-        ) : (
-          <Link to="/login">Login</Link>
-        )}
+        <NavLink
+          to="/host"
+          style={({ isActive }) => (isActive ? activeStyles : null)}
+        >
+          Host
+        </NavLink>
+        <NavLink
+          to="/about"
+          style={({ isActive }) => (isActive ? activeStyles : null)}
+        >
+          About
+        </NavLink>
+        <NavLink
+          to="/vans"
+          style={({ isActive }) => (isActive ? activeStyles : null)}
+        >
+          Vans
+        </NavLink>
+        <Link to="login" className="login-link">
+          Login
+        </Link>
       </nav>
     </header>
   );
