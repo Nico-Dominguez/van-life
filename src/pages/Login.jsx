@@ -46,6 +46,7 @@ export default function Login() {
         <h3 className="login-error">{location.state.message}</h3>
       )}
       <h1>Sign in to your account</h1>
+      <p>The username is "user" and the password is "password"</p>
       {error?.message && <h3 className="login-error">{error.message}</h3>}
 
       <form onSubmit={handleSubmit} className="login-form">
